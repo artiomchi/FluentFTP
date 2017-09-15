@@ -1077,6 +1077,9 @@ namespace FluentFTP {
 								offset += readBytes;
 							}
 
+							// zero return value (with no Exception) indicates EOS; so we should terminate the outer loop here
+							break;
+
 						} catch (IOException ex) {
 
 							// resume if server disconnected midway, or throw if there is an exception doing that as well
@@ -1116,6 +1119,9 @@ namespace FluentFTP {
 									sw.Restart();
 								}
 							}
+
+							// zero return value (with no Exception) indicates EOS; so we should terminate the outer loop here
+							break;
 
 						} catch (IOException ex) {
 
@@ -1231,6 +1237,9 @@ namespace FluentFTP {
 								await upStream.FlushAsync(token);
 								offset += readBytes;
 							}
+
+							// zero return value (with no Exception) indicates EOS; so we should terminate the outer loop here
+							break;
 						} catch (IOException ex) {
 
 							// resume if server disconnected midway, or throw if there is an exception doing that as well
@@ -1268,6 +1277,9 @@ namespace FluentFTP {
 									sw.Restart();
 								}
 							}
+
+							// zero return value (with no Exception) indicates EOS; so we should terminate the outer loop here
+							break;
 						} catch (IOException ex) {
 
 							// resume if server disconnected midway, or throw if there is an exception doing that as well
@@ -1698,16 +1710,11 @@ namespace FluentFTP {
 				}
 
 
-				// if the server has not reported a length for this file
-				// we use an alternate method to download it - read until EOF
-				bool readToEnd = (fileLen <= 0);
-
-
 				// loop till entire file downloaded
 				byte[] buffer = new byte[TransferChunkSize];
 				long offset = 0;
 				if (DownloadRateLimit == 0) {
-					while (offset < fileLen || readToEnd) {
+					while (offset < fileLen) {
 						try {
 
 							// read a chunk of bytes from the FTP stream
@@ -1719,11 +1726,8 @@ namespace FluentFTP {
 								offset += readBytes;
 							}
 
-							// if we reach here means EOF encountered
-							// stop if we are in "read until EOF" mode
-							if (readToEnd) {
-								break;
-							}
+							// zero return value (with no Exception) indicates EOS; so we should terminate the outer loop here
+							break;
 
 						} catch (IOException ex) {
 
@@ -1737,7 +1741,7 @@ namespace FluentFTP {
 				} else {
 					Stopwatch sw = new Stopwatch();
 					double rateLimitBytes = DownloadRateLimit * 1024;
-					while (offset < fileLen || readToEnd) {
+					while (offset < fileLen) {
 						try {
 
 							// read a chunk of bytes from the FTP stream
@@ -1765,11 +1769,8 @@ namespace FluentFTP {
 								}
 							}
 
-							// if we reach here means EOF encountered
-							// stop if we are in "read until EOF" mode
-							if (readToEnd) {
-								break;
-							}
+							// zero return value (with no Exception) indicates EOS; so we should terminate the outer loop here
+							break;
 
 						} catch (IOException ex) {
 
@@ -1836,15 +1837,11 @@ namespace FluentFTP {
 				    throw new FtpException("Cannot download file with 0 length in ASCII mode. Use the FtpDataType.Binary data type and try again.");
 				}
 
-                // if the server has not reported a length for this file
-                // we use an alternate method to download it - read until EOF
-                bool readToEnd = (fileLen <= 0);
-
 				// loop till entire file downloaded
 				byte[] buffer = new byte[TransferChunkSize];
 				long offset = 0;
 				if (DownloadRateLimit == 0) {
-					while (offset < fileLen || readToEnd) {
+					while (offset < fileLen) {
 						try {
 							// read a chunk of bytes from the FTP stream
 							int readBytes = 1;
@@ -1854,11 +1851,8 @@ namespace FluentFTP {
 								offset += readBytes;
 							}
 
-							// if we reach here means EOF encountered
-							// stop if we are in "read until EOF" mode
-							if (readToEnd) {
-								break;
-							}
+							// zero return value (with no Exception) indicates EOS; so we should terminate the outer loop here
+							break;
 
 						} catch (IOException ex) {
 
@@ -1872,7 +1866,7 @@ namespace FluentFTP {
 				} else {
 					Stopwatch sw = new Stopwatch();
 					double rateLimitBytes = DownloadRateLimit * 1024;
-					while (offset < fileLen || readToEnd) {
+					while (offset < fileLen) {
 						try {
 							// read a chunk of bytes from the FTP stream
 							int readBytes = 1;
@@ -1898,11 +1892,8 @@ namespace FluentFTP {
 								}
 							}
 
-							// if we reach here means EOF encountered
-							// stop if we are in "read until EOF" mode
-							if (readToEnd) {
-								break;
-							}
+							// zero return value (with no Exception) indicates EOS; so we should terminate the outer loop here
+							break;
 
 						} catch (IOException ex) {
 
